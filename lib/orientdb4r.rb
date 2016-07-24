@@ -97,7 +97,7 @@ end
 Orientdb4r::logger = Logger.new(STDOUT)
 Orientdb4r::logger.level = Logger::INFO
 
-Orientdb4r::logger.info \
+Orientdb4r::logger.debug \
     "Orientdb4r #{Orientdb4r::VERSION}, running on Ruby #{RUBY_VERSION} (#{RUBY_RELEASE_DATE}) [#{RUBY_PLATFORM}]"
 
 
