@@ -314,7 +314,8 @@ module Orientdb4r
         options[:password] = password unless options.include? :password
         debug_string = options[:uri]
         if debug_string
-          query_log("Orientdb4r::Client#call_server", URI.decode(debug_string))
+          method_prefix = options[:method].to_s.upcase+" "
+          query_log("Orientdb4r::Client#call_server", "#{method_prefix}#{URI.decode(debug_string)}")
         end
         idx = lb_strategy.node_index
         raise OrientdbError, lb_all_bad_msg if idx.nil? # no good node found
