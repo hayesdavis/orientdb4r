@@ -288,7 +288,7 @@ module Orientdb4r
 
     ###
     # Updates an existing document.
-    def update_document(doc)
+    def update_document(doc, options={})
       raise NotImplementedError, 'this should be overridden by concrete client'
     end
 

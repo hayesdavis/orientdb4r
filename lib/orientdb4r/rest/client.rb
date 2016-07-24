@@ -379,21 +379,28 @@ module Orientdb4r
     end
 
 
-    def update_document(doc) #:nodoc:
+    def update_document(doc, options={}) #:nodoc:
       raise ArgumentError, 'document is nil' if doc.nil?
       raise ArgumentError, 'document has no RID' if doc.doc_rid.nil?
       raise ArgumentError, 'document has no version' if doc.doc_version.nil?
 
       rid = doc.doc_rid
-      doc.delete '@rid' # will be not updated
+      # Temporarily remove for updating
+      raw_rid = doc.delete('@rid')
 
-      response = call_server(:method => :put, :uri => "document/#{@database}/#{rid.unprefixed}", \
+      begin
+        options = {:mode=>:full}.merge(options)
+        method = (options[:mode] == :partial ? :patch : :put)
+        response = call_server(:method => method, :uri => "document/#{@database}/#{rid.unprefixed}", \
           :content_type => 'application/json', :data => doc.to_json)
-      process_response(response) do
-        raise DataError, 'concurrent modification' if response.body =~ /OConcurrentModificationException/
-        raise DataError, 'validation problem' if response.body =~ /OValidationException/
+        process_response(response) do
+          raise DataError, 'concurrent modification' if response.body =~ /OConcurrentModificationException/
+          raise DataError, 'validation problem' if response.body =~ /OValidationException/
+        end
+      ensure
+        # Put the rid back
+        doc["@rid"] = raw_rid
       end
-      # empty http response
     end
 
 
